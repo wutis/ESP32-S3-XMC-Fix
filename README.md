@@ -1,4 +1,4 @@
-没问题，直接给你纯净的 Markdown 格式。你只需要点击右上角的“复制”按钮，然后直接粘贴到 GitHub 的编辑器里，它就会自动渲染出漂亮的排版。
+
 
 ***
 
@@ -98,17 +98,28 @@ idf.py -D MICROPY_BOARD=ESP32_GENERIC_S3 -D MICROPY_BOARD_VARIANT=SPIRAM_OCT bui
 *   `build/micropython.bin`
 
 **步骤 5：传输文件至 Windows 并烧录**
-1.  在 Ubuntu 端启动临时 HTTP 服务器：`python3 -m http.server 8000`。
-2.  在 Windows 浏览器中通过 Ubuntu 虚拟机的 IP `http://192.168.x.x:8000` 下载上述三个文件。
-3.  使用 `Flash Download Tool` 进行烧录：
-    *   `bootloader.bin` -> **`0x0`**
-    *   `partition-table.bin` -> **`0x8000`**
-    *   `micropython.bin` -> **`0x10000`**
+
+将编译生成的三个关键文件从 Ubuntu 传输至 Windows，并按照方案一重命名以便于区分：
+
+*   `bootloader/bootloader.bin 重命名为 YD-ESP32-S3-XMC-Fix-bootloader.bin
+
+*   `partition_table/partition-table.bin 重命名为 YD-ESP32-S3-partition-table.bin
+
+*   `micropython.bin 重命名为 YD-ESP32-S3-MicroPython-v1.29.0.bin
+
+使用 Flash Download Tool 进行烧录，请严格对应以下地址：
+
+*   `YD-ESP32-S3-XMC-Fix-bootloader.bin -> 填 0x0
+
+*   `YD-ESP32-S3-partition-table.bin -> 填 0x8000
+
+*   `YD-ESP32-S3-MicroPython-v1.29.0.bin -> 填 0x10000
 
 ## 🎉 最终结果
 烧录完成后，拔插 USB 或按下 RST 复位键。开发板成功启动，不再报 `XMC flash startup fail`。打开 Thonny，成功连接并出现 `>>>` 提示符，板载 RGB 灯（GPIO48）成功点亮！
+固件已提供下载，适用XM25QH128AHIG或其他Manufacturer ID (MFID) 为 `0x70`的芯片
 
 ## 💡 总结与建议
 *   对于使用较新批次 XMC Flash 芯片（MFID `0x70`）的 ESP32-S3 开发板，目前官方标准固件均无法直接启动。
-*   在 Windows 下编译 MicroPython 极其痛苦（长路径限制、环境冲突），**强烈建议使用 Linux 环境（虚拟机或 WSL2）**。
+*   在 Windows 下编译 MicroPython 极其痛苦（长路径限制、环境冲突），**强烈建议使用 Linux 环境**。
 *   购买此类开发板时，建议先用 `esptool flash_id` 确认 Flash 芯片型号，若遇到兼容性问题可直接要求商家更换或提供适配固件。
